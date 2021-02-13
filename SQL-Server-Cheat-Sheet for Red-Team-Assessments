@@ -225,9 +225,7 @@ Invoke-SQLOSCmd -Username deep -Password pass -Instance hackme.pal -Command whoa
 ----------------------
 
 Extended stored procedure -- is a stored procedure that calls the functions from the stored DLLs residing in the sql server. Hence, this DLL extends as an extension to the SQL Server.
-To register each extended stored procedure in the DLL, sysadmin rights are required. 
-It executes with the privileges of the service accout and runs in the process space of SQL server.
-The DLL can have any file extension and can be loaded from UNC Path or WebDAV.
+
 
 sp_addextendedproc 'xp_cmdshell','xplog70.dll'  -----  If xp_cmdshell is uninstalled
 
