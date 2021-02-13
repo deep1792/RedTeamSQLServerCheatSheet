@@ -133,12 +133,6 @@ Active login token - SELECT * FROM sys.login_token
 
 Privlege Escalaition in SQL server can be achieved in multiple ways such as:
 
-1. Brute force (already discussed)
-2. from public to sysadmin (by exploiting misconfigured roles, or exploiting the stored procedures, or poorly granted permissions)
-3. Sysadmin to OS Service account (UNC Path, command executions)
-4. OS Service account to OSAdmin
-5. OS Admin to sysadmin
-
 1. User Impersonation ---- 
 
 	i) Execute AS -- is by default a very powerful method of impersonating a user to execute a command as per the user with high privileges
